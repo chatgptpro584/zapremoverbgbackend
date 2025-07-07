@@ -1,32 +1,27 @@
-from PIL import Image, ImageEnhance, ImageFilter
-import io
+from PIL import Image, ImageFilter
 
-def resize_image(file, width, height):
-    img = Image.open(file)
-    resized = img.resize((width, height))
-    output = io.BytesIO()
-    resized.save(output, format='PNG')
-    output.seek(0)
-    return output
+def resize_image(image_file, width, height):
+    image = Image.open(image_file)
+    resized = image.resize((width, height))
+    path = "output/resized.png"
+    resized.save(path)
+    return path
 
-def crop_image(file, x, y, w, h):
-    img = Image.open(file)
-    cropped = img.crop((x, y, x + w, y + h))
-    output = io.BytesIO()
-    cropped.save(output, format='PNG')
-    output.seek(0)
-    return output
+def crop_image(image_file, x, y, w, h):
+    image = Image.open(image_file)
+    cropped = image.crop((x, y, x + w, y + h))
+    path = "output/cropped.png"
+    cropped.save(path)
+    return path
 
-def apply_effect(file, effect_type):
-    img = Image.open(file)
-    if effect_type == 'grayscale':
-        img = img.convert('L').convert('RGBA')
-    elif effect_type == 'blur':
-        img = img.filter(ImageFilter.BLUR)
-    elif effect_type == 'contrast':
-        enhancer = ImageEnhance.Contrast(img)
-        img = enhancer.enhance(2.0)
-    output = io.BytesIO()
-    img.save(output, format='PNG')
-    output.seek(0)
-    return output
+def apply_effect(image_file, effect_type):
+    image = Image.open(image_file)
+    if effect_type == "blur":
+        image = image.filter(ImageFilter.BLUR)
+    elif effect_type == "sharpen":
+        image = image.filter(ImageFilter.SHARPEN)
+    elif effect_type == "contour":
+        image = image.filter(ImageFilter.CONTOUR)
+    path = f"output/effect_{effect_type}.png"
+    image.save(path)
+    return path
