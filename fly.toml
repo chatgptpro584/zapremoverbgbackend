@@ -1,5 +1,4 @@
-app = "zapremoverbg-gmail-com
-"
+app = "zapremoverbg-gmail-com"
 kill_signal = "SIGINT"
 kill_timeout = 5
 
