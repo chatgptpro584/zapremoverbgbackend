@@ -1,12 +1,10 @@
 app = "zapremoverbgbackend"
-kill_signal = "SIGINT"
-kill_timeout = 5
-
-[build]
-  dockerfile = "Dockerfile"
 
 [env]
   PORT = "5000"
+
+[build]
+  dockerfile = "Dockerfile"
 
 [[services]]
   internal_port = 5000
