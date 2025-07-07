@@ -1,30 +1,29 @@
-import torch
-from torchvision import transforms
 from PIL import Image
 import numpy as np
+import torch
+from torchvision import transforms
+from models.u2net import U2NET
 import os
-from models.u2net import U2NET  # You need to add model architecture file in models/
 
 def remove_background(image_file, output_path):
-    model_path = './models/u2net.pth'
+    image = Image.open(image_file).convert("RGB")
+    transform = transforms.Compose([
+        transforms.Resize((320, 320)),
+        transforms.ToTensor(),
+    ])
+    img_tensor = transform(image).unsqueeze(0)
+
     model = U2NET(3, 1)
+    model_path = './models/u2net.pth'
     model.load_state_dict(torch.load(model_path, map_location='cpu'))
     model.eval()
 
-    image = Image.open(image_file).convert('RGB')
-    transform = transforms.Compose([
-        transforms.Resize((320, 320)),
-        transforms.ToTensor()
-    ])
-    input_tensor = transform(image).unsqueeze(0)
-
     with torch.no_grad():
-        pred = model(input_tensor)[0][0]
-        mask = pred.squeeze().cpu().numpy()
+        d1, *_ = model(img_tensor)
+        mask = d1[0][0].detach().numpy()
         mask = (mask - mask.min()) / (mask.max() - mask.min())
-        mask = (mask * 255).astype(np.uint8)
-        mask = Image.fromarray(mask).resize(image.size, Image.BILINEAR)
-        image.putalpha(mask)
+        mask = Image.fromarray((mask * 255).astype(np.uint8)).resize(image.size)
 
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    image.save(output_path)
+        empty = Image.new("RGBA", image.size, (0, 0, 0, 0))
+        image.putalpha(mask)
+        image.save(output_path)
