@@ -8,10 +8,14 @@ import gdown
 # Auto-download U²-Net model if missing
 os.makedirs('models', exist_ok=True)
 model_path = './models/u2net.pth'
-if not os.path.exists(model_path):
-    print("Downloading u2net.pth from Google Drive...")
-    url = 'https://drive.google.com/uc?id=1ao1ovG1Qtx4b7EoskHXmi2E9rp5CHLcZ'
-    gdown.download(url, model_path, quiet=False)
+
+try:
+    if not os.path.exists(model_path):
+        print("Downloading u2net.pth from Google Drive...")
+        url = 'https://drive.google.com/uc?id=1ao1ovG1Qtx4b7EoskHXmi2E9rp5CHLcZ'
+        gdown.download(url, model_path, quiet=False)
+except Exception as e:
+    print("❌ Model download failed:", e)
 
 app = Flask(__name__)
 
